@@ -1,0 +1,174 @@
+@use '../../utils/media' as *;
+
+$ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+// Таймлайн этапов: линия заполняется при прокрутке (--progress 0…1),
+// длина линии (--track) и пороги этапов считаются в Works.tsx
+.works {
+	&__items {
+		--node: 14px;
+		--rail: 56px;
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(var(--steps, 4), 1fr);
+		gap: 2rem;
+		margin: 0;
+		padding: var(--rail) 0 0;
+
+		// Трек и заливка — от первой точки до последней
+		&::before,
+		&::after {
+			content: '';
+			position: absolute;
+			top: calc(var(--node) / 2 - 1px);
+			left: calc(var(--node) / 2);
+			width: var(--track, calc(100% - var(--node)));
+			height: 2px;
+			border-radius: 2px;
+			transform-origin: left center;
+		}
+
+		&::before {
+			background: var(--line);
+		}
+
+		&::after {
+			background: var(--accent);
+			box-shadow: 0 0 12px rgba(47, 75, 255, 0.6);
+			transform: scaleX(var(--progress, 0));
+		}
+	}
+
+	&__item {
+		position: relative;
+
+		// Точка этапа на линии
+		&::before {
+			content: '';
+			position: absolute;
+			top: calc(var(--rail) * -1);
+			left: 0;
+			z-index: 1;
+			box-sizing: border-box;
+			width: var(--node);
+			height: var(--node);
+			border: 2px solid #3a3f4a;
+			border-radius: 50%;
+			background: var(--ink);
+			transition:
+				border-color 0.4s ease,
+				background-color 0.4s ease,
+				box-shadow 0.5s $ease-out,
+				transform 0.5s $ease-out;
+		}
+
+		h3 {
+			margin-bottom: 1rem;
+		}
+
+		p {
+			color: var(--muted);
+			font-size: var(--fs-md);
+			font-weight: var(--fw-light);
+			text-wrap: balance;
+		}
+	}
+
+	&__day {
+		display: block;
+		color: var(--accent);
+		margin-bottom: 0.5rem;
+	}
+
+	// Крупный контурный номер, заливается снизу вверх, когда этап активен
+	&__num {
+		display: block;
+		margin-bottom: 0.75rem;
+		font-size: clamp(56px, 6vw, 88px);
+		font-weight: var(--fw-bold);
+		line-height: 1;
+		letter-spacing: -0.04em;
+		color: transparent;
+		-webkit-text-stroke: 1px #3a3f4a;
+		background: linear-gradient(var(--accent), var(--accent)) no-repeat 0 100% / 100% 0%;
+		-webkit-background-clip: text;
+		background-clip: text;
+		transition:
+			background-size 0.9s $ease-out,
+			-webkit-text-stroke-color 0.4s ease;
+	}
+
+	@include media($laptop) {
+		&__items {
+			--rail: 44px;
+			grid-template-columns: 1fr;
+			gap: 2.5rem;
+			padding: 0 0 0 var(--rail);
+
+			&::before,
+			&::after {
+				top: calc(var(--node) / 2);
+				left: calc(var(--node) / 2 - 1px);
+				width: 2px;
+				height: var(--track, calc(100% - var(--node)));
+				transform-origin: center top;
+			}
+
+			&::after {
+				transform: scaleY(var(--progress, 0));
+			}
+		}
+
+		&__item::before {
+			top: 0;
+			left: calc(var(--rail) * -1);
+		}
+
+		&__num {
+			font-size: 48px;
+		}
+	}
+}
+
+// Неактивные этапы приглушены — только когда работает JS
+.js .works__item {
+	h3,
+	p,
+	.works__day {
+		transition: opacity 0.5s ease;
+	}
+
+	&:not(.is-active) {
+		h3,
+		p,
+		.works__day {
+			opacity: 0.4;
+		}
+	}
+
+	&.is-active::before {
+		border-color: var(--accent);
+		background: var(--accent);
+		box-shadow: 0 0 0 6px rgba(47, 75, 255, 0.18), 0 0 18px rgba(47, 75, 255, 0.7);
+		transform: scale(1.15);
+	}
+
+	&.is-active .works__num {
+		background-size: 100% 100%;
+		-webkit-text-stroke-color: var(--accent);
+	}
+}
+
+// Без JS — всё сразу «пройдено»
+html:not(.js) .works__items::after {
+	transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.works__item::before,
+	.works__num,
+	.js .works__item h3,
+	.js .works__item p {
+		transition: none;
+	}
+}

@@ -1,0 +1,33 @@
+@use './globals/main.scss';
+
+@use './blocks/Preloader/Preloader.scss';
+@use './blocks/ParticleMorph/ParticleMorph.scss';
+@use './blocks/Header/Header.scss';
+@use './blocks/Hero/Hero.scss';
+@use './blocks/Story/Story.scss';
+@use './blocks/Laptop/Laptop.scss';
+@use './blocks/About/About.scss';
+@use './blocks/Services/Services.scss';
+@use './blocks/Works/Works.scss';
+@use './blocks/Portfolio/Portfolio.scss';
+@use './blocks/Accordion/Accordion.scss';
+@use './blocks/Cities/Cities.scss';
+@use './blocks/Contacts/Contacts.scss';
+@use './blocks/Footer/Footer.scss';
+@use './blocks/Page/Page.scss';
+@use './blocks/Content/Content.scss';
+@use './blocks/Cards/Cards.scss';
+
+@use './blocks/Btn.scss';
+@use './blocks/SectionTitle.scss';
+@use './blocks/SectionDescr.scss';
+
+body {
+	margin: 0;
+	background: var(--ink);
+	color: var(--bg);
+	font-family: var(--font);
+	font-size: var(--fs-base);
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+}

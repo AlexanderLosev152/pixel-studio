@@ -1,0 +1,43 @@
+@use '../../utils/mixins' as *;
+@use '../../utils/media' as *;
+
+.header {
+	margin-block: 1rem;
+	&__wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	&__menu {
+		display: flex;
+		align-items: center;
+		gap: 2rem;
+		@include media($tablet) {
+			display: none;
+		}
+		a {
+			position: relative;
+			display: block;
+			&::after {
+				content: '';
+				position: absolute;
+				bottom: -0.3rem;
+				left: 0;
+				right: 0;
+				width: 0;
+				height: 2px;
+				transition: all 0.3s ease-in-out;
+			}
+			&.is-active::after {
+				width: 100%;
+				background: var(--accent);
+			}
+			@include hover {
+				&::after {
+					width: 100%;
+					background: var(--accent);
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,307 @@
+@use '../../utils/media' as *;
+
+$ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+// Закреплённый экран со сменой слов при прокрутке
+.story {
+	position: relative;
+	height: calc(var(--steps, 4) * 100svh);
+
+	&__sticky {
+		position: sticky;
+		top: 0;
+		height: 100svh;
+		overflow: hidden;
+	}
+
+	&__morph {
+		z-index: 0;
+
+		@include media($laptop) {
+			&.is-ready {
+				opacity: 0.45;
+			}
+		}
+	}
+
+	&__inner {
+		position: relative;
+		z-index: 1;
+		display: grid;
+		grid-template-rows: auto 1fr auto;
+		height: 100%;
+		padding-block: 96px 48px;
+	}
+
+	&__top {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		font-size: var(--fs-sm);
+		color: var(--muted);
+	}
+
+	&__title {
+		margin: 0;
+		font-size: inherit;
+		font-weight: var(--fw-regular);
+		letter-spacing: 0.02em;
+	}
+
+	&__counter {
+		font-variant-numeric: tabular-nums;
+	}
+
+	// Все шаги лежат друг на друге, виден только активный
+	&__steps {
+		position: relative;
+		align-self: center;
+		display: grid;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	&__step {
+		grid-area: 1 / 1;
+		pointer-events: none;
+
+		&.is-active {
+			pointer-events: auto;
+		}
+	}
+
+	&__word {
+		display: block;
+		overflow: hidden;
+		// Запас под выносные элементы букв (у, д, р)
+		padding-bottom: 0.14em;
+		font-size: clamp(48px, 10vw, 150px);
+		font-weight: var(--fw-semibold);
+		line-height: 1;
+		letter-spacing: -0.05em;
+
+		> span {
+			display: inline-block;
+			transform: translate3d(0, 110%, 0);
+			transition: transform 0.9s $ease-out;
+		}
+
+		i {
+			font-style: normal;
+			color: var(--accent);
+		}
+	}
+
+	&__text {
+		max-width: 44ch;
+		margin: 24px 0 0;
+		font-size: clamp(16px, 1.6vw, 20px);
+		font-weight: var(--fw-light);
+		color: var(--muted);
+		opacity: 0;
+		transform: translate3d(0, 20px, 0);
+		transition:
+			opacity 0.5s ease,
+			transform 0.6s $ease-out;
+	}
+
+	// Активный шаг выезжает снизу, прошедший уходит вверх
+	&__step.is-active &__word > span {
+		transform: none;
+		transition-delay: 0.1s;
+	}
+
+	&__step.is-past &__word > span {
+		transform: translate3d(0, -110%, 0);
+	}
+
+	&__step.is-active &__text {
+		opacity: 1;
+		transform: none;
+		transition-delay: 0.3s;
+	}
+
+	&__step.is-past &__text {
+		transform: translate3d(0, -20px, 0);
+	}
+
+	// Контурный номер шага — заливается снизу вверх, когда шаг активен
+	&__num {
+		display: block;
+		margin-bottom: 8px;
+		font-size: clamp(40px, 5vw, 72px);
+		font-weight: var(--fw-bold);
+		line-height: 1;
+		letter-spacing: -0.04em;
+		color: transparent;
+		-webkit-text-stroke: 1px #3a3f4a;
+		background: linear-gradient(var(--accent), var(--accent)) no-repeat 0 100% / 100% 0%;
+		-webkit-background-clip: text;
+		background-clip: text;
+		opacity: 0;
+		transform: translate3d(0, 16px, 0);
+		transition:
+			opacity 0.4s ease,
+			transform 0.6s $ease-out,
+			background-size 0.9s $ease-out 0.25s,
+			-webkit-text-stroke-color 0.4s ease 0.25s;
+	}
+
+	&__step.is-active &__num {
+		opacity: 1;
+		transform: none;
+		background-size: 100% 100%;
+		-webkit-text-stroke-color: var(--accent);
+	}
+
+	&__step.is-past &__num {
+		transform: translate3d(0, -16px, 0);
+	}
+
+	// Таймлайн внизу экрана: линия (--fill 0…1) и точки шагов
+	&__timeline {
+		--node: 14px;
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(var(--steps, 4), 1fr);
+
+		// Трек и заливка — от первой точки до последней
+		&::before,
+		&::after {
+			content: '';
+			position: absolute;
+			top: calc(var(--node) / 2 - 1px);
+			left: calc(var(--node) / 2);
+			width: calc((100% / var(--steps, 4)) * (var(--steps, 4) - 1));
+			height: 2px;
+			border-radius: 2px;
+			transform-origin: left center;
+		}
+
+		&::before {
+			background: var(--line);
+		}
+
+		&::after {
+			background: var(--accent);
+			box-shadow: 0 0 12px rgba(47, 75, 255, 0.6);
+			transform: scaleX(var(--fill, 0));
+		}
+	}
+
+	&__node {
+		position: relative;
+		display: grid;
+		gap: 2px;
+		padding-top: calc(var(--node) + 14px);
+		font-size: var(--fs-sm);
+		color: var(--muted);
+		transition: color 0.4s ease;
+
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 1;
+			box-sizing: border-box;
+			width: var(--node);
+			height: var(--node);
+			border: 2px solid #3a3f4a;
+			border-radius: 50%;
+			background: var(--ink);
+			transition:
+				border-color 0.4s ease,
+				background-color 0.4s ease,
+				box-shadow 0.5s $ease-out,
+				transform 0.5s $ease-out;
+		}
+
+		&.is-active::before {
+			border-color: var(--accent);
+			background: var(--accent);
+			box-shadow: 0 0 0 6px rgba(47, 75, 255, 0.18), 0 0 18px rgba(47, 75, 255, 0.7);
+		}
+
+		&.is-current {
+			color: var(--bg);
+
+			&::before {
+				transform: scale(1.25);
+			}
+		}
+	}
+
+	&__node-num {
+		color: var(--accent);
+		font-variant-numeric: tabular-nums;
+	}
+
+	@include media($mobile) {
+		&__inner {
+			padding-block: 80px 32px;
+		}
+
+		&__node {
+			font-size: 12px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		&__word > span,
+		&__text,
+		&__num,
+		&__node,
+		&__node::before {
+			transition: none;
+		}
+	}
+}
+
+// Без JS прокрутка не отслеживается — показываем шаги списком
+html:not(.js) .story {
+	height: auto;
+
+	.story__sticky {
+		position: static;
+		height: auto;
+	}
+
+	.story__steps {
+		gap: 48px;
+	}
+
+	.story__step {
+		grid-area: auto;
+	}
+
+	.story__word > span,
+	.story__text,
+	.story__num {
+		opacity: 1;
+		transform: none;
+	}
+
+	.story__timeline {
+		display: none;
+	}
+}
+
+@media print {
+	.story {
+		height: auto;
+	}
+	.story__sticky {
+		position: static;
+		height: auto;
+	}
+	.story__step {
+		grid-area: auto;
+	}
+	.story__word > span,
+	.story__text {
+		opacity: 1;
+		transform: none;
+	}
+}

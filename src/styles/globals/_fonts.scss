@@ -1,0 +1,3 @@
+@use '../utils/mixins' as *;
+
+@include font-face('JetBrains Mono', 'JetBrainsMono[wght]', 100 800, normal);

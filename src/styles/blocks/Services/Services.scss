@@ -1,0 +1,43 @@
+@use '../../utils/mixins' as *;
+
+.services {
+	&__items {
+		@include grid(20rem, 1rem);
+		margin-bottom: 3rem;
+		li {
+			padding: 1.5rem;
+			border: 1px solid var(--line);
+			border-radius: 1rem;
+			background: var(--surface);
+			h3 {
+				margin-bottom: 0.75rem;
+			}
+			p {
+				color: var(--muted);
+				font-size: var(--fs-md);
+				font-weight: var(--fw-light);
+			}
+		}
+	}
+	&__subtitle {
+		margin-bottom: 1rem;
+	}
+	&__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		li {
+			padding: 8px 18px;
+			border: 1px solid var(--line);
+			border-radius: 999px;
+			font-size: var(--fs-sm);
+			color: var(--muted);
+		}
+	}
+}
+
+.services__items a,
+.portfolio__item a {
+	display: block;
+	height: 100%;
+}

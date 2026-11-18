@@ -1,0 +1,41 @@
+@use '../../utils/media' as *;
+
+// 3D-облако частиц (components/ui/ParticleMorph)
+.particle-morph {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 1.4s ease;
+
+	&.is-ready {
+		opacity: 1;
+	}
+
+	canvas {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+}
+
+// В прелоадере — фоном под словами
+.preloader__morph {
+	z-index: 0;
+
+	@include media($laptop) {
+		&.is-ready {
+			opacity: 0.55;
+		}
+	}
+}
+
+.preloader__inner {
+	z-index: 1;
+}
+
+@media print {
+	.particle-morph {
+		display: none;
+	}
+}

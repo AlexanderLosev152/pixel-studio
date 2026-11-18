@@ -1,0 +1,345 @@
+@use '../../utils/media' as *;
+
+$ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+.about {
+	&__tabs-btn {
+		position: relative;
+		display: flex;
+		align-items: stretch;
+		gap: 1rem;
+		margin-bottom: 1.5rem;
+
+		.btn {
+			background: transparent;
+			border: 1px solid var(--line);
+			color: var(--bg);
+			border-radius: 999px;
+			padding: 11px 22px;
+			font: var(--fw-medium) var(--fs-md) / 1 var(--font);
+			cursor: pointer;
+			transition: all 0.2s;
+		}
+
+		.btn:focus-visible {
+			outline: 2px solid var(--accent);
+			outline-offset: 3px;
+		}
+
+		.about__tab-btn--active {
+			color: var(--ink);
+			background: var(--bg);
+		}
+	}
+
+	// Плашка под активным табом. Пока JS её не расставил — работает обычная заливка кнопки
+	&__tabs-indicator {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 0;
+		border-radius: 999px;
+		background: var(--bg);
+		opacity: 0;
+		pointer-events: none;
+		transition:
+			transform 0.5s $ease-out,
+			width 0.5s $ease-out,
+			height 0.5s $ease-out;
+	}
+
+	&__tabs-btn--indicator {
+		.about__tabs-indicator {
+			opacity: 1;
+		}
+
+		.btn {
+			position: relative;
+			z-index: 1;
+			transition:
+				color 0.35s ease,
+				border-color 0.35s ease;
+		}
+
+		.btn:hover:not(.about__tab-btn--active) {
+			border-color: var(--muted);
+		}
+
+		.about__tab-btn--active {
+			background: transparent;
+			border-color: transparent;
+		}
+	}
+
+	&__tabs-content {
+		position: relative;
+		overflow: hidden;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: 20px;
+		padding: 40px;
+	}
+
+	// Панели лежат друг на друге, высоту задаёт активная.
+	&__tabs-panels {
+		position: relative;
+		z-index: 1;
+
+		&--animated {
+			transition: height 0.4s $ease-out;
+
+			.about__card {
+				position: absolute;
+				inset: 0 0 auto;
+			}
+		}
+	}
+
+	&__card {
+		display: grid;
+		grid-template-columns: 2fr 1fr;
+		gap: 48px;
+	}
+
+	// Кроссфейд: старая панель гаснет, новая проявляется со сдвигом.
+	// visibility переключается в конце, чтобы уходящая панель успела погаснуть.
+	&__tabs-panels--animated &__card {
+		transition:
+			opacity 0.3s ease,
+			transform 0.4s $ease-out,
+			visibility 0s linear 0.4s;
+	}
+
+	&__tabs-panels--animated &__card--active {
+		z-index: 1;
+		transition:
+			opacity 0.3s ease,
+			transform 0.4s $ease-out,
+			visibility 0s;
+	}
+
+	&__card--active {
+		opacity: 1;
+		visibility: visible;
+		transform: none;
+	}
+
+	&__card--inactive {
+		opacity: 0;
+		visibility: hidden;
+		pointer-events: none;
+	}
+
+	&__card-title {
+		font-size: 28px;
+		letter-spacing: -0.02em;
+		margin-bottom: 12px;
+		font-weight: var(--fw-semibold);
+	}
+
+	&__card-description {
+		color: var(--muted);
+		margin: 0 0 20px;
+		font-weight: var(--fw-light);
+		// Не заезжаем на 3D-схему справа
+		max-width: min(80%, 46ch);
+	}
+
+	&__card-features {
+		display: grid;
+		gap: 10px;
+
+		li {
+			padding-left: 2rem;
+			position: relative;
+		}
+
+		li::before {
+			content: '';
+			position: absolute;
+			left: 0;
+			top: 0.7em;
+			width: 10px;
+			height: 2px;
+			background: var(--accent);
+		}
+	}
+
+	&__card-left {
+		border-right: 1px solid var(--line);
+	}
+
+	&__card-right {
+		display: grid;
+		align-items: baseline;
+		gap: 0.5rem;
+	}
+
+	&__card-value {
+		font-size: 40px;
+		letter-spacing: -0.03em;
+		font-weight: var(--fw-semibold);
+		line-height: 1.1;
+	}
+
+	&__card-info {
+		display: grid;
+		gap: 0.5rem;
+	}
+
+	&__card-btn {
+		text-align: center;
+	}
+}
+
+// Мобильная карточка: одна колонка, цена и срок под описанием
+@include media($tablet) {
+	.about__tabs-btn {
+		gap: 0.5rem;
+
+		.btn {
+			padding: 10px 16px;
+			font-size: var(--fs-sm);
+		}
+	}
+
+	.about__tabs-content {
+		padding: 24px 20px;
+		border-radius: 16px;
+	}
+
+	.about__card {
+		grid-template-columns: 1fr;
+		gap: 24px;
+	}
+
+	.about__card-left {
+		padding-bottom: 24px;
+		border-right: 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.about__card-title {
+		font-size: 24px;
+	}
+
+	.about__card-description {
+		max-width: none;
+	}
+
+	.about__card-features li {
+		padding-left: 1.5rem;
+	}
+
+	.about__card-right {
+		grid-template-columns: 1fr 1fr;
+		gap: 16px 12px;
+	}
+
+	.about__card-value {
+		font-size: clamp(22px, 6vw, 32px);
+		white-space: nowrap;
+	}
+
+	.about__card-btn,
+	.about__card-more {
+		grid-column: 1 / -1;
+	}
+
+	.about__card-more {
+		margin-top: 0;
+	}
+}
+
+// 3D-схема типа сайта — в свободной части левой колонки
+.about__morph {
+	inset: 0 auto 0 38%;
+	width: 30%;
+
+	@include media($laptop) {
+		display: none;
+	}
+}
+
+// Содержимое новой карточки собирается по очереди
+@media (prefers-reduced-motion: no-preference) {
+	.about__items.is-revealed .about__tabs-panels--animated .about__card--active {
+		.about__card-title,
+		.about__card-description,
+		.about__card-feature,
+		.about__card-info,
+		.about__card-btn,
+		.about__card-more {
+			animation: about-card-in 0.6s $ease-out both;
+		}
+
+		.about__card-title {
+			animation-name: about-title-in;
+		}
+		.about__card-description {
+			animation-delay: 60ms;
+		}
+		.about__card-feature {
+			animation-delay: calc(120ms + var(--i, 0) * 60ms);
+		}
+		.about__card-info:nth-child(1) {
+			animation-delay: 100ms;
+		}
+		.about__card-info:nth-child(2) {
+			animation-delay: 160ms;
+		}
+		.about__card-btn {
+			animation-delay: 220ms;
+		}
+		.about__card-more {
+			animation-delay: 280ms;
+		}
+	}
+}
+
+@keyframes about-card-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes about-title-in {
+	from {
+		opacity: 0;
+		clip-path: inset(0 0 100% 0);
+		transform: translate3d(0, 0.5em, 0);
+	}
+	to {
+		opacity: 1;
+		clip-path: inset(0 0 -0.2em 0);
+		transform: none;
+	}
+}
+
+.about__card[hidden] {
+	display: none;
+}
+
+.about__card-more {
+	display: block;
+	margin-top: 1rem;
+	color: var(--muted);
+	font-size: var(--fs-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.about__tabs-panels--animated,
+	.about__tabs-panels--animated .about__card,
+	.about__tabs-panels--animated .about__card--active {
+		transition: none;
+	}
+
+	.about__card--active,
+	.about__card--inactive {
+		transform: none;
+	}
+}

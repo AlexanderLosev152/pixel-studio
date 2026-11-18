@@ -1,0 +1,107 @@
+@use '../../utils/mixins' as *;
+
+.accordion {
+	display: grid;
+	gap: 0.75rem;
+
+	&__item {
+		border: 1px solid var(--line);
+		border-radius: 1rem;
+		background: var(--surface);
+
+		// Chrome прячет содержимое закрытого details через content-visibility
+		// и не пересчитывает стили панели. Оставляем контент отрисованным —
+		// видимость всё равно управляется через visibility у __panel.
+		&::details-content {
+			content-visibility: visible;
+		}
+
+		&[open] .accordion__question::after {
+			transform: rotate(45deg);
+		}
+	}
+
+	&__question {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1rem;
+		padding: 1.25rem 1.5rem;
+		font-weight: var(--fw-medium);
+		cursor: pointer;
+		list-style: none;
+
+		&::-webkit-details-marker {
+			display: none;
+		}
+
+		&::after {
+			content: '+';
+			flex: none;
+			color: var(--accent);
+			font-size: 1.5rem;
+			line-height: 1;
+			transition: transform 0.2s;
+		}
+
+		@include hover {
+			color: var(--accent);
+		}
+	}
+
+	// Плавное раскрытие: grid-строка от 0fr к 1fr,
+	// содержимое остаётся в DOM и работает без JS.
+	&__panel {
+		display: grid;
+		grid-template-rows: 0fr;
+		visibility: hidden;
+		transition:
+			grid-template-rows 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+			visibility 0s linear 0.4s;
+	}
+
+	&__item[open] &__panel {
+		grid-template-rows: 1fr;
+		visibility: visible;
+		transition:
+			grid-template-rows 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+			visibility 0s;
+	}
+
+	&__answer {
+		overflow: hidden;
+		min-height: 0;
+	}
+
+	&__content {
+		padding: 0 1.5rem 1.25rem;
+		color: var(--muted);
+		font-size: var(--fs-md);
+		font-weight: var(--fw-light);
+		opacity: 0;
+		transform: translateY(-0.375rem);
+		transition:
+			opacity 0.3s ease 0.05s,
+			transform 0.3s ease 0.05s;
+	}
+
+	&__item[open] &__content {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.accordion {
+		&__panel,
+		&__item[open] &__panel {
+			transition: none;
+		}
+
+		&__content,
+		&__item[open] &__content {
+			transform: none;
+			transition: none;
+		}
+	}
+}

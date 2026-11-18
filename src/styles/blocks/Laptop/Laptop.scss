@@ -1,0 +1,265 @@
+@use '../../utils/media' as *;
+
+.laptop {
+	--w: clamp(260px, 25vw, 420px);
+	--metal: #2b2f38;
+	--metal-light: #3a3f4a;
+	position: relative;
+	flex-shrink: 0;
+	width: var(--w);
+	margin-right: calc(var(--w) * 0.08);
+	margin-left: calc(var(--w) * 0.15);
+	padding-bottom: calc(var(--w) * 0.32);
+	perspective: 1800px;
+
+	&__scene {
+		position: relative;
+		transform-style: preserve-3d;
+		transform: rotateX(-16deg) rotateY(-26deg);
+		// Пока ноутбук раскрывается — стоим на месте, потом начинаем «парить»
+		animation: laptop-float 6s ease-in-out calc(var(--intro, 0ms) + 1.45s) infinite;
+	}
+
+	// Крышка с экраном
+	&__lid {
+		position: relative;
+		aspect-ratio: 16 / 10;
+		padding: calc(var(--w) * 0.022);
+		border-radius: 14px 14px 4px 4px;
+		background: linear-gradient(160deg, var(--metal-light), var(--metal));
+		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+		transform-origin: bottom center;
+		transform: rotateX(-6deg);
+		// Раскрытие крышки: стартуем «закрытыми» и открываем после загрузки
+		animation: laptop-open 1.2s cubic-bezier(0.4, 0, 0.2, 1) calc(var(--intro, 0ms) + 0.2s) both;
+	}
+
+	&__screen {
+		height: 100%;
+		border-radius: 6px;
+		overflow: hidden;
+		background:
+			radial-gradient(
+				120% 90% at 80% 0%,
+				rgba(47, 75, 255, 0.22),
+				transparent 60%
+			),
+			#0d0f14;
+		box-shadow: 0 0 80px rgba(47, 75, 255, 0.35);
+		// Экран «включается» уже после раскрытия крышки
+		animation: laptop-screen-on 0.45s ease-out calc(var(--intro, 0ms) + 1.15s) both;
+	}
+
+	&__bar {
+		display: flex;
+		gap: 6px;
+		padding: 10px 12px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+		i {
+			width: 9px;
+			height: 9px;
+			border-radius: 50%;
+			background: #3a3f4a;
+			&:nth-child(1) {
+				background: #ff5f57;
+			}
+			&:nth-child(2) {
+				background: #febc2e;
+			}
+			&:nth-child(3) {
+				background: #28c840;
+			}
+		}
+	}
+
+	&__code {
+		display: grid;
+		gap: calc(var(--w) * 0.014);
+		padding: calc(var(--w) * 0.035) calc(var(--w) * 0.04);
+	}
+
+	&__line {
+		display: block;
+		height: calc(var(--w) * 0.012);
+		margin-left: calc(var(--indent) * var(--w) * 0.04);
+		max-width: var(--width);
+		border-radius: 99px;
+		animation: laptop-type 9s ease-out infinite both;
+		// Печатать начинаем, когда крышка уже почти открыта
+		animation-delay: calc(var(--intro, 0ms) + 1.3s + var(--index) * 0.35s);
+		&--accent {
+			background: var(--accent);
+		}
+		&--green {
+			background: #34c79a;
+		}
+		&--orange {
+			background: #f08a4b;
+		}
+		&--light {
+			background: rgba(246, 247, 249, 0.75);
+		}
+		&--muted {
+			background: rgba(107, 114, 128, 0.6);
+		}
+	}
+
+	&__cursor {
+		width: calc(var(--w) * 0.012);
+		height: calc(var(--w) * 0.024);
+		background: var(--bg);
+		animation: laptop-blink 1s steps(1) infinite;
+		animation-delay: calc(var(--intro, 0ms) + 1.3s);
+	}
+
+	// Основание с клавиатурой — лежит горизонтально перед экраном
+	&__base {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		width: 100%;
+		height: calc(var(--w) * 0.62);
+		padding: 6% 8% 0;
+		border-radius: 4px 4px 16px 16px;
+		background: linear-gradient(180deg, var(--metal), var(--metal-light));
+		transform-origin: top center;
+		transform: rotateX(90deg);
+		transform-style: preserve-3d;
+		// Торец основания — толщина ноутбука
+		&::after {
+			content: '';
+			position: absolute;
+			top: 100%;
+			left: 0;
+			width: 100%;
+			height: calc(var(--w) * 0.025);
+			border-radius: 0 0 12px 12px;
+			background: #1e2128;
+			transform-origin: top center;
+			transform: rotateX(-90deg);
+		}
+	}
+
+	&__keyboard {
+		height: 52%;
+		border-radius: 6px;
+		background:
+			repeating-linear-gradient(
+				90deg,
+				transparent 0 calc(7.14% - 3px),
+				var(--metal) calc(7.14% - 3px) 7.14%
+			),
+			repeating-linear-gradient(
+				180deg,
+				#16181d 0 calc(20% - 4px),
+				var(--metal) calc(20% - 4px) 20%
+			);
+	}
+
+	&__trackpad {
+		width: 34%;
+		height: 30%;
+		margin: 6% auto 0;
+		border-radius: 8px;
+		background: rgba(255, 255, 255, 0.05);
+		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+	}
+
+	&__shadow {
+		position: absolute;
+		left: 10%;
+		bottom: 0;
+		width: 80%;
+		height: calc(var(--w) * 0.08);
+		border-radius: 50%;
+		background: radial-gradient(
+			closest-side,
+			rgba(47, 75, 255, 0.35),
+			transparent
+		);
+		filter: blur(12px);
+		animation: laptop-shadow 6s ease-in-out calc(var(--intro, 0ms) + 1.45s) infinite;
+	}
+
+	@include media($laptop) {
+		display: none;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		&__lid,
+		&__screen,
+		&__scene,
+		&__shadow,
+		&__line,
+		&__cursor {
+			animation: none;
+		}
+		&__line {
+			width: var(--width);
+		}
+	}
+}
+
+// Крышка: из закрытого положения (-88deg, лежит на клавиатуре)
+// поднимается почти вертикально, с лёгким «доводом» в конце
+@keyframes laptop-open {
+	0% {
+		transform: rotateX(-88deg);
+	}
+	80% {
+		transform: rotateX(1deg);
+	}
+	100% {
+		transform: rotateX(-6deg);
+	}
+}
+
+@keyframes laptop-screen-on {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes laptop-float {
+	0%,
+	100% {
+		transform: rotateX(-16deg) rotateY(-26deg) translateY(0);
+	}
+	50% {
+		transform: rotateX(-14deg) rotateY(-22deg) translateY(-14px);
+	}
+}
+
+@keyframes laptop-shadow {
+	0%,
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0.7;
+		transform: scale(0.92);
+	}
+}
+
+@keyframes laptop-type {
+	0% {
+		width: 0;
+	}
+	8%,
+	88% {
+		width: var(--width);
+	}
+	100% {
+		width: 0;
+	}
+}
+
+@keyframes laptop-blink {
+	50% {
+		opacity: 0;
+	}
+}

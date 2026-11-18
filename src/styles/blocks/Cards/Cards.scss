@@ -1,0 +1,37 @@
+@use '../../utils/mixins' as *;
+
+.cards {
+	@include grid(20rem, 1rem);
+	&__link {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		padding: 1.5rem;
+		border: 1px solid var(--line);
+		border-radius: 1rem;
+		background: var(--surface);
+		transition: border-color 0.2s;
+		@include hover {
+			border-color: var(--accent);
+		}
+	}
+	&__meta {
+		color: var(--accent);
+		font-size: var(--fs-sm);
+		margin-bottom: 0.5rem;
+	}
+	&__title {
+		margin-bottom: 0.75rem;
+	}
+	&__text {
+		color: var(--muted);
+		font-size: var(--fs-md);
+		font-weight: var(--fw-light);
+		margin-bottom: 1rem;
+	}
+	&__more {
+		margin-top: auto;
+		color: var(--accent);
+		font-size: var(--fs-sm);
+	}
+}

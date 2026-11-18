@@ -1,0 +1,34 @@
+@use '../../utils/mixins' as *;
+
+.footer {
+	padding-block: 3rem 2rem;
+	border-top: 1px solid var(--line);
+	&__columns {
+		@include grid(14rem, 2rem);
+		margin-bottom: 3rem;
+	}
+	&__title {
+		font-weight: var(--fw-semibold);
+		margin-bottom: 1rem;
+	}
+	&__column {
+		li {
+			margin-bottom: 0.5rem;
+			font-size: var(--fs-sm);
+			color: var(--muted);
+		}
+		a {
+			@include hover {
+				color: var(--bg);
+			}
+		}
+	}
+	&__bottom {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 1rem;
+		color: var(--muted);
+		font-size: var(--fs-sm);
+	}
+}

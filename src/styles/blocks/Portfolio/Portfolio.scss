@@ -1,0 +1,221 @@
+@use '../../utils/mixins' as *;
+
+.portfolio {
+	&__items {
+		@include grid(22rem, 1.25rem);
+	}
+
+	&__item {
+		min-width: 0;
+	}
+
+	&__link {
+		--rotate-x: 0deg;
+		--rotate-y: 0deg;
+		--lift: 0px;
+		--scale: 1;
+		--glare-x: 50%;
+		--glare-y: 50%;
+		--shift-x: 0px;
+		--shift-y: 0px;
+		--img-scale: 1.06;
+
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		border: 1px solid var(--line);
+		border-radius: 1rem;
+		background: var(--surface);
+		transform-style: preserve-3d;
+		transform: rotateX(var(--rotate-x)) rotateY(var(--rotate-y))
+			translateY(var(--lift)) scale(var(--scale));
+		transition:
+			transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+			border-color 0.35s ease,
+			box-shadow 0.35s ease;
+		&.is-tilting {
+			transition:
+				transform 0.12s linear,
+				border-color 0.35s ease,
+				box-shadow 0.35s ease;
+
+			.portfolio__img {
+				transition-duration: 0.12s;
+			}
+		}
+
+		@include hover {
+			--lift: -6px;
+			--scale: 1.015;
+			--img-scale: 1.2;
+
+			border-color: rgba(47, 75, 255, 0.55);
+			box-shadow:
+				0 36px 70px -36px rgba(0, 0, 0, 0.9),
+				0 0 60px -24px rgba(47, 75, 255, 0.5);
+
+			.portfolio__media {
+				transform: translateZ(1rem);
+			}
+			.portfolio__caption {
+				transform: translateZ(26px);
+			}
+			.portfolio__arrow {
+				transform: translateZ(42px) translate(2px, -2px);
+				border-color: var(--accent);
+				background: var(--accent);
+				color: var(--on-accent);
+			}
+			.portfolio__glare {
+				opacity: 1;
+			}
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--accent);
+			outline-offset: 4px;
+
+			.portfolio__glare {
+				opacity: 1;
+			}
+			.portfolio__arrow {
+				border-color: var(--accent);
+				color: var(--on-accent);
+				background: var(--accent);
+			}
+		}
+	}
+
+	&__media {
+		position: relative;
+		display: block;
+		overflow: hidden;
+		border-radius: calc(1rem - 1px) calc(1rem - 1px) 0 0;
+		background: #0d0f14;
+		transform: translateZ(10px);
+		transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+
+		// Затемнение снизу, чтобы скриншот мягко переходил в подпись
+		&::after {
+			content: '';
+			position: absolute;
+			inset: auto 0 0;
+			height: 38%;
+			background: linear-gradient(transparent, rgba(13, 15, 20, 0.45));
+			pointer-events: none;
+		}
+	}
+
+	&__img {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 16 / 10;
+		object-fit: cover;
+		object-position: top;
+		transform: scale(var(--img-scale))
+			translate3d(var(--shift-x), var(--shift-y), 0);
+		transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	&__caption {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-top: auto;
+		padding: 1rem 1.1rem 1.15rem;
+		transform: translateZ(20px);
+		transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	&__titles {
+		min-width: 0;
+
+		h3 {
+			margin-bottom: 0.2rem;
+			font-size: 1.05rem;
+			line-height: 1.3;
+			letter-spacing: -0.01em;
+		}
+	}
+
+	&__category {
+		display: block;
+		color: var(--muted);
+		font-size: var(--fs-sm);
+		line-height: 1.4;
+	}
+
+	&__arrow {
+		display: grid;
+		place-items: center;
+		flex: 0 0 auto;
+		width: 2.2rem;
+		height: 2.2rem;
+		border: 1px solid var(--line);
+		border-radius: 50%;
+		color: var(--accent);
+		transform: translateZ(34px);
+		transition:
+			transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+			background-color 0.25s ease,
+			border-color 0.25s ease,
+			color 0.25s ease;
+
+		svg {
+			display: block;
+		}
+	}
+
+	&__glare {
+		position: absolute;
+		inset: 0;
+		z-index: 2;
+		border-radius: inherit;
+		opacity: 0;
+		pointer-events: none;
+		transform: translateZ(30px);
+		background:
+			radial-gradient(
+				22rem circle at var(--glare-x) var(--glare-y),
+				rgba(255, 255, 255, 0.16),
+				transparent 46%
+			),
+			radial-gradient(
+				30rem circle at var(--glare-x) var(--glare-y),
+				rgba(47, 75, 255, 0.22),
+				transparent 58%
+			);
+		transition: opacity 0.35s ease;
+	}
+
+	&__all {
+		display: inline-block;
+		margin-top: 2rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.portfolio {
+		&__link,
+		&__link:hover {
+			transform: none;
+			transition: none;
+
+			.portfolio__media,
+			.portfolio__caption,
+			.portfolio__arrow,
+			.portfolio__glare {
+				transform: none;
+				transition: none;
+			}
+		}
+
+		&__img {
+			transform: none;
+			transition: none;
+		}
+	}
+}

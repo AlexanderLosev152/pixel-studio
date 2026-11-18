@@ -1,0 +1,64 @@
+@use '../utils/media' as *;
+
+:root {
+	// container
+	--container-w: 1440px;
+	--container-p: 24px;
+	--section-p: 90px;
+	@include media($mobile) {
+		--section-p: 2rem;
+	}
+
+	/* Цвета */
+	--bg: #f6f7f9;
+	--surface: #171a21;
+	--ink: #16181d;
+	--muted: #6b7280;
+	--line: #262a33;
+	--accent: #2f4bff;
+	--on-accent: #fff;
+	--case-1: #2f4bff;
+	--case-2: #1f8a70;
+	--case-3: #c2410c;
+	--shot-bar: rgba(255, 255, 255, 0.85);
+	--option-text: #16181d;
+	/* Шрифты */
+	--font:
+		'JetBrains Mono', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--fw-light: 300;
+	--fw-regular: 400;
+	--fw-medium: 500;
+	--fw-semibold: 600;
+	--fw-bold: 700;
+	--fs-base: 17px;
+	--fs-md: 16px;
+	--fs-sm: 15px;
+	--fs-xs: 14px;
+	box-sizing: border-box;
+	padding-top: env(safe-area-inset-top, 0px);
+	padding-bottom: env(safe-area-inset-bottom, 0px);
+	color-scheme: light;
+}
+
+//@media (prefers-color-scheme: dark) {
+//	:root:not([data-theme='light']) {
+//		--bg: #0f1115;
+//		--surface: #171a21;
+//		--ink: #f1f2f5;
+//		--muted: #9aa1ae;
+//		--line: #262a33;
+//		--accent: #6b82ff;
+//		--on-accent: #0f1115;
+//		color-scheme: dark;
+//	}
+//}
+//:root[data-theme='dark'] {
+//	--bg: #0f1115;
+//	--surface: #171a21;
+//	--ink: #f1f2f5;
+//	--muted: #9aa1ae;
+//	--line: #262a33;
+//	--accent: #6b82ff;
+//	--on-accent: #0f1115;
+//	color-scheme: dark;
+//}

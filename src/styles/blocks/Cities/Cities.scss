@@ -1,0 +1,37 @@
+@use '../../utils/mixins' as *;
+
+.cities {
+	&__groups {
+		display: grid;
+		gap: 2rem;
+	}
+	&__region {
+		margin-bottom: 1rem;
+		color: var(--muted);
+		font-size: var(--fs-md);
+		font-weight: var(--fw-medium);
+	}
+	&__items {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+	}
+	&__link {
+		display: block;
+		padding: 8px 18px;
+		font-size: var(--fs-sm);
+		border: 1px solid var(--line);
+		border-radius: 999px;
+		transition:
+			border-color 0.3s ease-in-out,
+			color 0.3s ease-in-out;
+		@include hover {
+			border-color: var(--accent);
+			color: var(--accent);
+		}
+		&--active {
+			color: var(--ink);
+			background: var(--bg);
+		}
+	}
+}

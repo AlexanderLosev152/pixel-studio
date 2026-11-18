@@ -1,0 +1,164 @@
+@use '../../utils/media' as *;
+
+$ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+$ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+
+// Пока идёт загрузка — страница не скроллится
+html.is-loading,
+html.is-loading body {
+	overflow: hidden;
+}
+
+.preloader {
+	position: fixed;
+	inset: 0;
+	z-index: 1000;
+	display: flex;
+	background: var(--ink);
+	color: var(--bg);
+	clip-path: inset(0 0 0 0);
+
+	&__inner {
+		position: relative;
+		display: grid;
+		grid-template-rows: auto 1fr auto;
+		padding-top: 32px;
+		padding-bottom: 40px;
+	}
+
+	&__brand {
+		font-size: var(--fs-sm);
+		color: var(--muted);
+		letter-spacing: 0.02em;
+	}
+
+	&__words {
+		align-self: center;
+		overflow: hidden;
+		// Запас под выносные элементы букв (у, д, р)
+		padding-bottom: 0.14em;
+		font-size: clamp(56px, 14vw, 200px);
+		font-weight: var(--fw-semibold);
+		line-height: 1;
+		letter-spacing: -0.05em;
+	}
+
+	&__word {
+		display: inline-block;
+		animation: preloader-word 0.6s $ease-out both;
+
+		&::after {
+			content: '.';
+			color: var(--accent);
+		}
+	}
+
+	&__bottom {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		font-size: var(--fs-sm);
+		color: var(--muted);
+	}
+
+	&__count {
+		color: var(--bg);
+		font-size: clamp(32px, 6vw, 72px);
+		font-weight: var(--fw-medium);
+		line-height: 1;
+		letter-spacing: -0.04em;
+		font-variant-numeric: tabular-nums;
+	}
+
+	&__bar {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 3px;
+		background: var(--line);
+
+		i {
+			display: block;
+			height: 100%;
+			background: var(--accent);
+			box-shadow: 0 0 16px rgba(47, 75, 255, 0.6);
+			transform: scaleX(0);
+			transform-origin: left center;
+		}
+	}
+
+	// Уход: содержимое уезжает вверх, затем шторка сворачивается
+	&--leaving {
+		pointer-events: none;
+		animation: preloader-curtain 0.9s $ease-in-out 0.2s both;
+
+		.preloader__inner {
+			animation: preloader-content-out 0.6s $ease-in-out both;
+		}
+	}
+
+	@include media($mobile) {
+		&__inner {
+			padding-top: 20px;
+			padding-bottom: 28px;
+		}
+	}
+}
+
+@keyframes preloader-word {
+	from {
+		transform: translate3d(0, 105%, 0);
+	}
+	to {
+		transform: none;
+	}
+}
+
+@keyframes preloader-content-out {
+	to {
+		opacity: 0;
+		transform: translate3d(0, -60px, 0);
+	}
+}
+
+@keyframes preloader-curtain {
+	to {
+		clip-path: inset(0 0 100% 0);
+	}
+}
+
+// Без JS и на повторных визитах прелоадер не нужен
+html:not(.is-loading) .preloader:not(.preloader--leaving) {
+	display: none;
+}
+
+// Полоса загрузки при переходах между страницами
+.route-progress {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1001;
+	height: 2px;
+	background: var(--accent);
+	box-shadow: 0 0 10px rgba(47, 75, 255, 0.7);
+	transform: scaleX(0);
+	transform-origin: left center;
+	opacity: 0;
+	pointer-events: none;
+	transition:
+		transform 0.2s ease-out,
+		opacity 0.3s ease;
+
+	&.is-active {
+		opacity: 1;
+	}
+}
+
+@media print {
+	.preloader,
+	.route-progress {
+		display: none !important;
+	}
+}
